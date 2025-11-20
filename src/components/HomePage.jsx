@@ -1,5 +1,4 @@
-// src/components/HomePage.jsx
-import React, { useState, useEffect, useCallback } from 'react'; // Added useCallback
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import axios from 'axios';
@@ -10,8 +9,7 @@ import MovieDetailModal from './MovieDetailModal';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-// HomePage now accepts onUserToggleSuccess from App.jsx
-function HomePage({ auth, isDarkMode, toggleDarkMode, userWatchlist, userFavorites, onUserToggleSuccess }) { // <--- ADDED onUserToggleSuccess
+function HomePage({ auth, isDarkMode, toggleDarkMode, userWatchlist, userFavorites, onUserToggleSuccess }) {
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

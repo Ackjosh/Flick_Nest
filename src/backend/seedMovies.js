@@ -4,15 +4,13 @@ dotenv.config();
 import mongoose from 'mongoose';
 import axios from 'axios';
 import Movie from './models/movie.js';
-import http from 'http';
-import https from 'https';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 
 const axiosInstance = axios.create({
-  timeout: 10000, // lower timeout
+  timeout: 10000,
   headers: {
     'User-Agent': 'Mozilla/5.0',
   },
@@ -35,7 +33,7 @@ async function fetchWithRetry(url, retries = 3) {
 async function seedMovies() {
   await mongoose.connect(MONGODB_URI);
 
-  const totalPages = 5;  // number of pages you want to fetch
+  const totalPages = 5;
 
   try {
     for (let page = 1; page <= totalPages; page++) {

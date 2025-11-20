@@ -1,4 +1,3 @@
-// src/components/Watchlist.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -60,7 +59,6 @@ const Watchlist = ({ auth, isDarkMode, toggleDarkMode, userId, userWatchlist, us
     }
   };
 
-  // --- Render Logic ---
   if (loadingMediaDetails) {
     return (
       <Layout isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode}>
@@ -98,7 +96,7 @@ const Watchlist = ({ auth, isDarkMode, toggleDarkMode, userId, userWatchlist, us
           <table className="min-w-full bg-gray-800 text-white border-collapse">
             <thead>
               <tr className="bg-gray-700">
-                <th className="py-2 px-4 text-left border-b border-gray-600"></th> {/* Placeholder for the circle/status */}
+                <th className="py-2 px-4 text-left border-b border-gray-600"></th>
                 <th className="py-2 px-4 text-left border-b border-gray-600">#</th>
                 <th className="py-2 px-4 text-left border-b border-gray-600">Image</th>
                 <th className="py-2 px-4 text-left border-b border-gray-600">Title</th>

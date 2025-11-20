@@ -1,4 +1,3 @@
-// src/App.jsx - REVISED for robust loading
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -19,12 +18,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [user, setUser] = useState(null); // Firebase user object
+  const [user, setUser] = useState(null);
   const [userWatchlist, setUserWatchlist] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
-  const [loadingAuthAndUserData, setLoadingAuthAndUserData] = useState(true); // Initial state is true
+  const [loadingAuthAndUserData, setLoadingAuthAndUserData] = useState(true);
 
-  // For debugging, keep these:
   console.log(`[App Render] Start. user UID: ${user?.uid}, loadingAuthAndUserData: ${loadingAuthAndUserData}`);
 
 
@@ -32,7 +30,6 @@ function App() {
     setIsDarkMode(!isDarkMode);
   };
 
-  // fetchUserCollections is memoized and takes uid as a direct parameter
   const fetchUserCollections = useCallback(async (firebaseUid) => {
     console.log(`[fetchUserCollections] Called for UID: ${firebaseUid || 'none'}`);
     if (!firebaseUid) {
@@ -52,30 +49,23 @@ function App() {
       setUserWatchlist([]);
       setUserFavorites([]);
     }
-  }, []); // No dependencies here, it's a pure function helper for the effect below.
+  }, []);
 
-  // Primary useEffect for auth state and initial data fetching
   useEffect(() => {
     console.log("[App useEffect Auth] Setting up onAuthStateChanged listener.");
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log(`[onAuthStateChanged Callback] Firebase provided user: ${currentUser?.uid || 'null'}`);
 
-      // Update the user state immediately
       setUser(currentUser);
 
-      // Now, based on the current auth state, fetch or clear collections
       if (currentUser) {
-        await fetchUserCollections(currentUser.uid); // Pass the UID directly
+        await fetchUserCollections(currentUser.uid); 
       } else {
-        // If user logs out, clear collections
         setUserWatchlist([]);
         setUserFavorites([]);
         console.log("[onAuthStateChanged Callback] User is null, collections cleared.");
       }
 
-      // ONLY set loadingAuthAndUserData to false *after*
-      // 1. onAuthStateChanged has provided a user (or null)
-      // 2. fetchUserCollections (or the clearing of lists) has completed.
       setLoadingAuthAndUserData(false);
       console.log(`[onAuthStateChanged Callback] Loading set to false. Final user: ${currentUser?.uid || 'null'}`);
     });
@@ -84,24 +74,20 @@ function App() {
       unsubscribe();
       console.log("[App useEffect Auth] onAuthStateChanged listener unsubscribed.");
     };
-  }, [auth, fetchUserCollections]); // Depend on 'auth' for listener, and 'fetchUserCollections' for its stability
+  }, [auth, fetchUserCollections]);
 
-  // This function is passed down to components to trigger a re-fetch
   const handleUserToggleSuccess = useCallback(async () => {
     console.log("[handleUserToggleSuccess] Triggered.");
-    // This `user` comes from the App component's state
     if (user?.uid) {
       console.log(`[handleUserToggleSuccess] Re-fetching for user: ${user.uid}`);
       await fetchUserCollections(user.uid);
     } else {
       console.warn("[handleUserToggleSuccess] No user.uid available for re-fetch. Collections already cleared?");
-      // If user is somehow logged out by now, clear client-side lists
       setUserWatchlist([]);
       setUserFavorites([]);
     }
-  }, [user, fetchUserCollections]); // Depends on 'user' state and 'fetchUserCollections'
+  }, [user, fetchUserCollections]);
 
-  // Render the loading screen if data is not yet ready
   if (loadingAuthAndUserData) {
     console.log("[App Render] Showing loading screen.");
     return (
@@ -113,7 +99,6 @@ function App() {
     );
   }
 
-  // Once loading is false, render routes based on resolved user state
   console.log(`[App Render] Rendering routes. User UID: ${user?.uid}`);
   return (
     <Router>
@@ -136,7 +121,6 @@ function App() {
                 onUserToggleSuccess={handleUserToggleSuccess}
               />
             ) : (
-              // Navigate to sign-in only if `user` is null *after* loading is complete
               <Navigate to="/sign-in" replace />
             )
           }
@@ -149,9 +133,9 @@ function App() {
                 auth={auth}
                 isDarkMode={isDarkMode}
                 toggleDarkMode={toggleDarkMode}
-                userId={user.uid} // Pass the UID explicitly
-                userFavorites={userFavorites} // Pass favorites to Favorites page
-                userWatchlist={userWatchlist} // Pass watchlist (if needed)
+                userId={user.uid}
+                userFavorites={userFavorites}
+                userWatchlist={userWatchlist}
                 onUserToggleSuccess={handleUserToggleSuccess}
               />
             ) : (
@@ -167,9 +151,9 @@ function App() {
                 auth={auth}
                 isDarkMode={isDarkMode}
                 toggleDarkMode={toggleDarkMode}
-                userId={user.uid} // Pass the UID explicitly
-                userWatchlist={userWatchlist} // Pass watchlist to Watchlist page
-                userFavorites={userFavorites} // Pass favorites (if needed)
+                userId={user.uid}
+                userWatchlist={userWatchlist}
+                userFavorites={userFavorites}
                 onUserToggleSuccess={handleUserToggleSuccess}
               />
             ) : (

@@ -25,7 +25,7 @@ const SignUp = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [username, setUsername] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [status, setStatus] = useState(""); // To track process status
+    const [status, setStatus] = useState("");
     
     const navigate = useNavigate();
 
@@ -43,7 +43,6 @@ const SignUp = () => {
             setStatus("Authentication successful! User ID: " + user.uid);
             
             try {
-                // Step 2: Store user data in Firestore
                 setStatus("Storing user data in Firestore...");
                 await setDoc(doc(db, "users", user.uid), {
                     email: email,
@@ -53,8 +52,6 @@ const SignUp = () => {
                 });
                 
                 setStatus("User data stored! Redirecting to homepage...");
-                
-                // Step 3: Navigate to homepage
                 navigate("/");
             } catch (firestoreError) {
                 setStatus("Error storing user data.");
@@ -70,7 +67,6 @@ const SignUp = () => {
         }
     };
 
-    // Function to manually proceed to homepage if stuck
     const proceedToHomepage = () => {
         navigate("/");
     };
@@ -139,8 +135,7 @@ const SignUp = () => {
                         >
                             {isLoading ? "Creating Account..." : "Sign Up"}
                         </Button>
-                        
-                        {/* Emergency redirect button - only shown if process has started but is stuck */}
+
                         {isLoading && status.includes("Authentication successful") && (
                             <Button 
                                 type="button"

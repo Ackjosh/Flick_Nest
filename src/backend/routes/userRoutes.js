@@ -1,18 +1,14 @@
-// src/routes/userRoutes.js
 import express from 'express';
-import User from '../models/user.js'; // Assuming your User model is in this path
+import User from '../models/user.js';
 
 const router = express.Router();
 
-// Get user data (favorites and watchlist will now contain objects)
-// This route is correct for fetching user data
 router.get('/:userId', async (req, res) => {
   try {
-    const firebaseUid = req.params.userId; // Use req.params.userId
-    const user = await User.findOne({ firebaseUid }); // Query by firebaseUid
+    const firebaseUid = req.params.userId;
+    const user = await User.findOne({ firebaseUid });
 
     if (!user) {
-      // If user not found, return empty arrays to avoid errors on frontend
       return res.json({
         favorites: [],
         watchlist: []
@@ -29,11 +25,14 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-// Add item to favorites
-// Path now includes :userId as a URL parameter
 router.post('/:userId/favorites', async (req, res) => {
   const firebaseUid = req.params.userId;
   const { itemId, mediaType } = req.body;
+
+  if (!firebaseUid || typeof firebaseUid !== 'string' || firebaseUid.length === 0 || firebaseUid === 'null') {
+    console.error('Validation failed: A valid user ID is required for this action.');
+    return res.status(400).json({ message: 'A valid user ID is required.' });
+  }
 
   if (!itemId || !mediaType) {
     return res.status(400).json({ message: 'itemId and mediaType are required in the request body.' });
@@ -43,18 +42,16 @@ router.post('/:userId/favorites', async (req, res) => {
     let user = await User.findOne({ firebaseUid });
 
     if (!user) {
-      // If user doesn't exist, create a new one
       user = new User({ firebaseUid, favorites: [] });
       await user.save();
     }
 
-    const itemToAdd = { id: String(itemId), media_type: mediaType }; // Ensure itemId is String for consistency
+    const itemToAdd = { id: String(itemId), media_type: mediaType };
 
-    // Now, update the existing or newly created user
     const updatedUser = await User.findOneAndUpdate(
       { firebaseUid },
       { $addToSet: { favorites: itemToAdd } },
-      { new: true } // No need for upsert: true here anymore, as we've handled creation
+      { new: true }
     );
 
     res.status(200).json({
@@ -67,19 +64,15 @@ router.post('/:userId/favorites', async (req, res) => {
   }
 });
 
-// Remove item from favorites
-// Path now includes :userId as a URL parameter
 router.delete('/:userId/favorites', async (req, res) => {
   const firebaseUid = req.params.userId;
-  // Extract from query parameters for DELETE requests
-  const { mediaId, mediaType } = req.query; // <--- CHANGE FROM req.body to req.query
+  const { mediaId, mediaType } = req.query;
 
-  if (!mediaId || !mediaType) { // Use mediaId consistent with frontend
+  if (!mediaId || !mediaType) {
     return res.status(400).json({ message: 'mediaId and mediaType are required query parameters.' });
   }
 
   try {
-    // Construct the item object as it's stored in MongoDB
     const itemToRemove = { id: String(mediaId), media_type: mediaType };
 
     const user = await User.findOneAndUpdate(
@@ -102,8 +95,6 @@ router.delete('/:userId/favorites', async (req, res) => {
   }
 });
 
-// Add item to watchlist
-// Path now includes :userId as a URL parameter
 router.post('/:userId/watchlist', async (req, res) => {
   const firebaseUid = req.params.userId;
   const { itemId, mediaType } = req.body;
@@ -138,12 +129,9 @@ router.post('/:userId/watchlist', async (req, res) => {
   }
 });
 
-// Remove item from watchlist
-// Path now includes :userId as a URL parameter
 router.delete('/:userId/watchlist', async (req, res) => {
   const firebaseUid = req.params.userId;
-  // Extract from query parameters for DELETE requests
-  const { mediaId, mediaType } = req.query; // <--- CHANGE FROM req.body to req.query
+  const { mediaId, mediaType } = req.query;
 
   if (!mediaId || !mediaType) {
     return res.status(400).json({ message: 'mediaId and mediaType are required query parameters.' });

@@ -7,16 +7,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
-    // --- CRITICAL CHANGE FOR DUPLICATES: ADD { _id: false } HERE ---
     watchlist: [{
-      id: { type: String, required: true }, // It's good practice to make 'id' required
+      id: { type: String, required: true },
       media_type: { type: String, required: true, enum: ['movie', 'tv'] }
-    }, { _id: false }], // <--- Add this option
-    // --- CRITICAL CHANGE FOR DUPLICATES: ADD { _id: false } HERE ---
+    }, { _id: false }],
     favorites: [{
-      id: { type: String, required: true }, // It's good practice to make 'id' required
+      id: { type: String, required: true },
       media_type: { type: String, required: true, enum: ['movie', 'tv'] }
-    }, { _id: false }] // <--- Add this option
+    }, { _id: false }]
   },
   { timestamps: true }
 );

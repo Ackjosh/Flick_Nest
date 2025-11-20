@@ -5,11 +5,11 @@ const movieSchema = new mongoose.Schema({
   title: { type: String, required: true },
   posterPath: String,
   releaseDate: String,
-  mediaType: String,  // e.g., "movie", "tv", "anime"
+  mediaType: String,
   voteAverage: Number,
-  episodes: Number, // optional, for tv shows/anime
+  episodes: Number
 },
-{ timestamps : true }
+{ timestamps: true }
 );
 
 export default mongoose.model('Movie', movieSchema);

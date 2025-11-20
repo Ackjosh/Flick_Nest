@@ -1,4 +1,3 @@
-// src/components/MovieCard.jsx
 import React, { useState, useEffect } from 'react';
 import { Heart, Plus, Check } from 'lucide-react';
 import axios from 'axios';
@@ -47,17 +46,14 @@ function MovieCard({ movie, onMovieClick, isDarkMode, userId, userWatchlist = []
       const url = `${API_BASE_URL}/user/${userId}/favorites`;
 
       if (currentIsFavorite) {
-        // Remove from favorites (DELETE)
         console.log(`Attempting DELETE to ${url} with params:`, { mediaId: String(itemId), mediaType: mediaType });
         await axios.delete(url, {
-          params: { mediaId: String(itemId), mediaType: mediaType } // Backend expects mediaId for DELETE params
+          params: { mediaId: String(itemId), mediaType: mediaType }
         });
       } else {
-        // Add to favorites (POST)
-        // CRITICAL FIX: Backend expects 'itemId' here, not 'id' or 'mediaId'
         console.log(`Attempting POST to ${url} with data:`, { itemId: String(itemId), mediaType: mediaType });
         await axios.post(url, {
-          itemId: String(itemId), // <--- CHANGE THIS TO itemId
+          itemId: String(itemId),
           mediaType: mediaType
         });
       }
@@ -87,17 +83,14 @@ function MovieCard({ movie, onMovieClick, isDarkMode, userId, userWatchlist = []
       const url = `${API_BASE_URL}/user/${userId}/watchlist`;
 
       if (isWatchlisted) {
-        // Remove from watchlist (DELETE)
         console.log(`Attempting DELETE to ${url} with params:`, { mediaId: String(itemId), mediaType: mediaType });
         await axios.delete(url, {
-          params: { mediaId: String(itemId), mediaType: mediaType }, // Backend expects mediaId for DELETE params
+          params: { mediaId: String(itemId), mediaType: mediaType },
         });
       } else {
-        // Add to watchlist (POST)
-        // CRITICAL FIX: Backend expects 'itemId' here, not 'id' or 'mediaId'
         console.log(`Attempting POST to ${url} with data:`, { itemId: String(itemId), mediaType: mediaType });
         await axios.post(url, {
-          itemId: String(itemId), // <--- CHANGE THIS TO itemId
+          itemId: String(itemId),
           mediaType: mediaType,
         });
       }

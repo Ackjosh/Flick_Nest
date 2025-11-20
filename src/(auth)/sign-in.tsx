@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 const auth = getAuth(app);
 
-function SignIn() { // Renamed 'signIn' to 'SignIn' for React component naming convention
+function SignIn() {
     const [emailAddress, setEmailAddress] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -29,12 +29,11 @@ function SignIn() { // Renamed 'signIn' to 'SignIn' for React component naming c
             const userCredential = await signInWithEmailAndPassword(auth, emailAddress, password);
             console.log("Sign-in successful. User UID:", userCredential.user.uid);
             
-            // Add a small delay before navigating
             setTimeout(() => {
-                navigate("/"); // Navigate to the home page
-            }, 50); // 50ms is usually enough, adjust if needed (e.g., 100ms)
+                navigate("/");
+            }, 50);
             
-        } catch (err: any) { // Use 'any' for err type or cast to FirebaseError
+        } catch (err: any) {
             setError(err.message);
             console.error("Sign-in error:", err.message);
         }
@@ -88,9 +87,9 @@ function SignIn() { // Renamed 'signIn' to 'SignIn' for React component naming c
                             </div>
                         </div>
                         <Button
-                            type="submit" // Use type="submit" for the button within the form
+                            type="submit"
                             className="w-full bg-green-600 text-white mt-5 hover:bg-green-700 cursor-pointer"
-                            // No onClick={signInUser} needed if type="submit" and form onSubmit is handled
+                            
                         >
                             Sign In
                         </Button>
@@ -106,4 +105,4 @@ function SignIn() { // Renamed 'signIn' to 'SignIn' for React component naming c
     )
 }
 
-export default SignIn; // Renamed to SignIn to match function name
+export default SignIn;

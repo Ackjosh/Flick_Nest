@@ -1,17 +1,15 @@
-// src/components/MovieDetailModal.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Bookmark, Heart, X, Plus, Check } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-// MovieDetailModal now accepts onUserToggleSuccess as a prop
-function MovieDetailModal({ movie, isOpen, onClose, isDarkMode, userId, userWatchlist = [], userFavorites = [], onUserToggleSuccess }) { // <--- ADDED onUserToggleSuccess
+function MovieDetailModal({ movie, isOpen, onClose, isDarkMode, userId, userWatchlist = [], userFavorites = [], onUserToggleSuccess }) {
 
-  const [isWatchlisted, setIsWatchlisted] = useState(false); // Initialized directly in useEffect
+  const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [isLoadingWatchlist, setIsLoadingWatchlist] = useState(false);
 
-  const [isFavorite, setIsFavorite] = useState(false); // Initialized directly in useEffect
+  const [isFavorite, setIsFavorite] = useState(false);
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
 
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -19,7 +17,6 @@ function MovieDetailModal({ movie, isOpen, onClose, isDarkMode, userId, userWatc
   const itemId = movie?.id;
   const mediaType = movie?.media_type;
 
-  // Effect to update local states when relevant props change
   useEffect(() => {
     if (isOpen && userId && itemId && mediaType) {
       setIsWatchlisted(userWatchlist.some(
@@ -29,12 +26,11 @@ function MovieDetailModal({ movie, isOpen, onClose, isDarkMode, userId, userWatc
         (fav) => String(fav.id) === String(itemId) && fav.media_type === mediaType
       ));
     } else if (!isOpen) {
-      // Reset states when modal closes
       setIsWatchlisted(false);
       setIsFavorite(false);
       setImgLoaded(false);
     }
-  }, [isOpen, userId, itemId, mediaType, userWatchlist, userFavorites]); // Added userFavorites to dependencies
+  }, [isOpen, userId, itemId, mediaType, userWatchlist, userFavorites]);
 
   const toggleWatchlist = async (e) => {
     e.stopPropagation();
@@ -46,29 +42,24 @@ function MovieDetailModal({ movie, isOpen, onClose, isDarkMode, userId, userWatc
 
     setIsLoadingWatchlist(true);
     try {
-      if (isWatchlisted) { // Removing from watchlist
+      if (isWatchlisted) {
         await axios.delete(`${API_BASE_URL}/user/${userId}/watchlist`, {
-          params: { mediaId: String(itemId), mediaType: mediaType }, // CORRECTED: mediaId here
+          params: { mediaId: String(itemId), mediaType: mediaType },
         });
-      } else { // Adding to watchlist
+      } else {
         await axios.post(`${API_BASE_URL}/user/${userId}/watchlist`, {
-          itemId: String(itemId), // CORRECTED: itemId here
+          itemId: String(itemId),
           mediaType: mediaType
         });
       }
 
-      // --- CRITICAL CHANGE: Call the parent's re-fetch function ---
       if (onUserToggleSuccess) {
         await onUserToggleSuccess();
       }
-      // --- REMOVE OPTIMISTIC UPDATE HERE. useEffect will handle it. ---
-      // setIsWatchlisted(!isWatchlisted); // REMOVE THIS LINE
-      onClose(); // Close modal after successful action, App will re-fetch data
+      onClose();
     } catch (error) {
       console.error("Error updating watchlist:", error.response?.data || error.message);
       alert('Failed to update watchlist. Please try again.');
-      // If you kept the optimistic update, you'd revert it here
-      // setIsWatchlisted(isWatchlisted);
     } finally {
       setIsLoadingWatchlist(false);
     }
@@ -94,13 +85,10 @@ function MovieDetailModal({ movie, isOpen, onClose, isDarkMode, userId, userWatc
         });
       }
 
-      // --- CRITICAL CHANGE: Call the parent's re-fetch function ---
       if (onUserToggleSuccess) {
         await onUserToggleSuccess();
       }
-      // --- REMOVE OPTIMISTIC UPDATE HERE. useEffect will handle it. ---
-      // setIsFavorite(!isFavorite); // REMOVE THIS LINE
-      onClose(); // Close modal after successful action, App will re-fetch data
+      onClose();
     } catch (error) {
       console.error("Error updating favorite status:", error.response?.data || error.message);
       alert('Failed to update favorite status. Please try again.');

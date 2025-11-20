@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { SidebarTrigger } from './ui/Sidebar';
-import { Search } from 'lucide-react'; // 🔹 Importing search icon
-import { LogIn, UserPlus, LogOut } from "lucide-react"; // Added LogOut import
+import { Search } from 'lucide-react';
+import { LogIn, UserPlus, LogOut } from "lucide-react";
 import hamburgerIcon from '../assets/hamburger.svg';
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import { SignUpButton } from '@clerk/clerk-react';
 
 function Header({ onSearch, onResetList, toggleDarkMode, isDarkMode, user, onLogout }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,9 +46,6 @@ function Header({ onSearch, onResetList, toggleDarkMode, isDarkMode, user, onLog
 
       <div className="options">
         <ul className='flex flex-wrap gap-7 cursor-pointer'>
-          <li className='hover:text-gray-400 cursor-pointer'><a href="/">Home</a></li>
-          <li className='hover:text-gray-400 cursor-pointer'>About</li>
-          <li className='hover:text-gray-400 cursor-pointer'>Contact</li>
         </ul>
       </div>
 
@@ -68,7 +63,7 @@ function Header({ onSearch, onResetList, toggleDarkMode, isDarkMode, user, onLog
             className="px-4 py-2 bg-gray-800 text-white transition rounded-br-2xl rounded-bl-2xl rounded-tl-2xl rounded-tr-2xl cursor-pointer flex items-center justify-center"
             onClick={handleSearch}
           >
-            <Search className="w-5 h-5" /> {/* 🔹 Search Icon */}
+            <Search className="w-5 h-5" />
           </button>
         </div>
 

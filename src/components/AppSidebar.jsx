@@ -15,7 +15,6 @@ import {
   Star 
 } from 'lucide-react'
 
-// Menu items
 const items = [
   {
     title: "Home",
